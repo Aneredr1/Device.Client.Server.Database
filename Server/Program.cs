@@ -153,7 +153,16 @@ namespace Server
             Random rand = new Random();
             while (true)
             {
-                //sendMessages.Add(DataWorker.get_message());
+                string device_mes = DataWorker.get_surgard();
+
+                if (DataWorker.write_journal(device_mes))
+                {
+                    sendMessages.Add(DataWorker.make_message());
+                }
+                else
+                {
+                    Console.WriteLine("Ошибка записи сообщения");
+                }
                 Thread.Sleep(rand.Next(800, 7000));
             }
         }
