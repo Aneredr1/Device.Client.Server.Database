@@ -1,10 +1,12 @@
 ﻿using DesktopClient.Model;
+using DesktopClient.Model.Sockets;
 using DesktopClient.Models;
 using DesktopClient.View;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -39,6 +41,14 @@ namespace DesktopClient.ViewModel
             {
                 return openDataViewWindow ?? new RelayCommand(obj =>
                 {
+                    ClientSocket.CreateConnection();
+
+                    if (ClientSocket.TryAutorize())
+                    {
+                        Thread thread = new Thread(ClientSocket.GetMessages);
+                        thread.Start();
+                    }
+
                     bool IsAuth = false;
                     Window wnd = obj as Window;
                     TextBox textBox = wnd.FindName("LoginBlock") as TextBox;

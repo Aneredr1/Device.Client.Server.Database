@@ -1,8 +1,10 @@
-﻿using System;
+﻿using DesktopClient.Models;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
 
 namespace DesktopClient.Model.Sockets
 {
@@ -10,6 +12,15 @@ namespace DesktopClient.Model.Sockets
     {
         static Socket clientSocket;
         static byte[] result = new byte[1024];
+        static Data data = new Data();
+        static private Message message;
+
+        static public Message newMessage
+        {
+            get { return message; }
+            set { message = value; }
+        }
+
 
         public static void CreateConnection()
         {
@@ -18,33 +29,45 @@ namespace DesktopClient.Model.Sockets
 
             clientSocket.Connect(new IPEndPoint(ip, 8080));
 
-            Data data = new Data();
+            
 
+            
+            
+        }
+
+        public static bool TryAutorize()
+        {
             clientSocket.Send(Encoding.UTF8.GetBytes(data.CurrentUser.user_token));
-
             int n = clientSocket.Receive(result);
             if (Encoding.UTF8.GetString(result, 0, n) == "NO_AUTORIZE")
             {
-                // Открыть окно ввода логинапароля
-
-                clientSocket.Send(Encoding.UTF8.GetBytes(data.CurrentUser.Login + ";" + data.CurrentUser.Password));
+                return false;
+                //clientSocket.Send(Encoding.UTF8.GetBytes(data.CurrentUser.Login + ";" + data.CurrentUser.Password));
 
             }
             else
             {
-                while (true)
+                return true;
+                /*while (true)
                 {
                     n = clientSocket.Receive(result);
                     // Выводим данные на вьюшку
-                }
+                }*/
             }
         }
 
-        static void SendToken(object socket)
+        static void SendToken()
         {
-            Socket socket1 = (Socket)socket;
+            clientSocket.Send(Encoding.UTF8.GetBytes(data.CurrentUser.user_token));
+        }
 
-
+        public static void GetMessages()
+        {
+            while (true)
+            {
+                int n = clientSocket.Receive(result);
+                newMessage = JsonSerializer.Deserialize<Message>(Encoding.UTF8.GetString(result));
+            }
         }
     }
 }
