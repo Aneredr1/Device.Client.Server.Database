@@ -71,7 +71,6 @@ namespace Server
                 // Существует/актуален ли токен пользователя
                 using (UserDataContext db = new UserDataContext())
                 {
-                    var tokenHandler = new JwtSecurityTokenHandler();
                     var user = db.Users.FirstOrDefault(x => x.user_token == Encoding.UTF8.GetString(result, 0, n));
                     if (user != null)
                     {

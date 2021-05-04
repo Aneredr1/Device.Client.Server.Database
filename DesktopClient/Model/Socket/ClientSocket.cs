@@ -40,7 +40,10 @@ namespace DesktopClient.Model.Sockets
             {
                 clientSocket.Send(Encoding.UTF8.GetBytes(data.CurrentUser.user_token));
             }
+
             int n = clientSocket.Receive(result);
+
+            
             if (Encoding.UTF8.GetString(result, 0, n) == "NO_AUTORIZE")
             {
                 return false;
