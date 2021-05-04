@@ -72,7 +72,7 @@ namespace Server
                 using (UserDataContext db = new UserDataContext())
                 {
                     var tokenHandler = new JwtSecurityTokenHandler();
-                    var user = db.Users.FirstOrDefault(x => x.user_token == tokenHandler.ReadToken(Encoding.UTF8.GetString(result, 0, n)));
+                    var user = db.Users.FirstOrDefault(x => x.user_token == Encoding.UTF8.GetString(result, 0, n));
                     if (user != null)
                     {
                         return true;
@@ -153,7 +153,7 @@ namespace Server
             Random rand = new Random();
             while (true)
             {
-                sendMessages.Add(DataWorker.get_message());
+                //sendMessages.Add(DataWorker.get_message());
                 Thread.Sleep(rand.Next(800, 7000));
             }
         }

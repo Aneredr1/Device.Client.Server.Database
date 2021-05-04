@@ -16,7 +16,7 @@ namespace Server.Models.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=UsersDb;Trusted_Connection=True;");
+            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=UserDb;Trusted_Connection=True;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -24,9 +24,9 @@ namespace Server.Models.Data
             modelBuilder.Entity<User>().HasData(
                 new User[]
                 {
-                new User { User_Id = 1, Login = "Login1", User_Name = "Арбузов Арбуз Арбузович", Password = "password" },
-                new User { User_Id = 2, Login = "Login2", User_Name = "Дынев Дынь Дыньевич",  Password = "qwerty" },
-                new User { User_Id = 3, Login = "Login3", User_Name = "Кивиев Кивь Кивиевич", Password = "podsolnuh" }
+                new User { User_Id = 1, Login = "Login1", User_Name = "Арбузов Арбуз Арбузович", Password = "password", user_token = String.Empty },
+                new User { User_Id = 2, Login = "Login2", User_Name = "Дынев Дынь Дыньевич",  Password = "qwerty", user_token = String.Empty},
+                new User { User_Id = 3, Login = "Login3", User_Name = "Кивиев Кивь Кивиевич", Password = "podsolnuh", user_token = String.Empty }
                 }); 
         }
     }

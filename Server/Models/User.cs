@@ -19,5 +19,7 @@ namespace Server.Models
 
         [Required]
         public string Password { get; set; }
+
+        public string user_token { get; set; }
     }
 }
