@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Server.Models.Data
 {
-    class DataWorker
+    public static class DataWorker
     {
         const char sg_flag = '5';
         const char R = '1';
@@ -17,7 +17,7 @@ namespace Server.Models.Data
 
 
         // ген протокола и запись в журнал
-        public string get_surgard() 
+        public static string get_surgard() 
         {
             string PP = string.Empty;
             string XYZ = string.Empty;
@@ -32,7 +32,7 @@ namespace Server.Models.Data
             return sg_flag + PP + R + MT + AAAA + Q + XYZ + GG + CCC;
         }
 
-        public bool write_journal(string sg_string)
+        public static bool write_journal(string sg_string)
         {
             bool res = false;
             StringBuilder builder = new StringBuilder(sg_string);
@@ -54,12 +54,6 @@ namespace Server.Models.Data
 
                             sg.Journal.Add(new jr_surgard { date_action = DateTime.Now, id_device = dev_id, id_code = cod_id, id_group = gr_id });
                             sg.SaveChanges();
-
-                            string cod_name = sg.Codes.Find(cod_id).name;
-                            string dev_name = sg.Devices.Find(dev_id).name;
-                            string gr_name = sg.Groups.Find(gr_id).name;
-
-                            Message mes = new Message(DateTime.Now, XYZ, cod_name, PP, dev_name, GG, gr_name);
                             res = true;
                         }
                     }
@@ -69,12 +63,30 @@ namespace Server.Models.Data
         }
 
 
-        //public Message get_message()
-        //{
+        public static Message make_message()
+        {
+            Message mes;
+            using (SurGardDataContext sg = new SurGardDataContext())
+            {
+                jr_surgard note = sg.Journal.Last(); //последний элемент журнала
 
+                string code = sg.Codes.Find(note.id_code).code; // код события
 
-        //    return new Message();
-        //}
+                string cod_name = sg.Codes.Find(note.id_code).name; // описание события
+
+                string dev_code = sg.Devices.Find(note.id_device).number; // номер устройства
+
+                string dev_name = sg.Devices.Find(note.id_device).name; // название устройства
+
+                string gr_code = sg.Groups.Find(note.id_group).code; // код группы
+
+                string gr_name = sg.Groups.Find(note.id_group).name; // название группы
+
+                mes = new Message(note.date_action, code, cod_name, dev_code, dev_name, gr_code, gr_name);
+            }
+
+            return mes;
+        }
 
     }
 }
