@@ -26,9 +26,8 @@ namespace Server.Models.Data
                 {
                 new User { User_Id = 1, Login = "Login1", User_Name = "Арбузов Арбуз Арбузович", Password = "password" },
                 new User { User_Id = 2, Login = "Login2", User_Name = "Дынев Дынь Дыньевич",  Password = "qwerty" },
-                new User { User_Id = 3, Login = "Login3", User_Name = "Кивиев Кивь Кивиевич", Password = "podsolnuh" },
-
-                });
+                new User { User_Id = 3, Login = "Login3", User_Name = "Кивиев Кивь Кивиевич", Password = "podsolnuh" }
+                }); 
         }
     }
 }
