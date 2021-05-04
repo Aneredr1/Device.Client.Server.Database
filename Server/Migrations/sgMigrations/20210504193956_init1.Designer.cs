@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Server.Models.Data;
@@ -9,9 +10,10 @@ using Server.Models.Data;
 namespace Server.Migrations.sgMigrations
 {
     [DbContext(typeof(SurGardDataContext))]
-    partial class SurGardDataContextModelSnapshot : ModelSnapshot
+    [Migration("20210504193956_init1")]
+    partial class init1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

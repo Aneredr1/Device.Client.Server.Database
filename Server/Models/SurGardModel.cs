@@ -18,6 +18,11 @@ namespace Server.Models
         public string number { get; set; }
 
         public IEnumerable<jr_surgard> jr_surgard { get; set; }
+
+        public di_devices()
+        {
+            jr_surgard = new List<jr_surgard>();
+        }
     }
 
     public class di_codes
@@ -32,6 +37,11 @@ namespace Server.Models
         public string code { get; set; }
 
         public IEnumerable<jr_surgard> jr_surgard { get; set; }
+
+        public di_codes()
+        {
+            jr_surgard = new List<jr_surgard>();
+        }
     }
 
     public class di_groups
@@ -46,6 +56,11 @@ namespace Server.Models
         public string code { get; set; }
 
         public IEnumerable<jr_surgard> jr_surgard { get; set; }
+
+        public di_groups()
+        {
+            jr_surgard = new List<jr_surgard>();
+        }
     }
 
     public class jr_surgard
@@ -57,18 +72,20 @@ namespace Server.Models
         public DateTime date_action { get; set; }
 
         [Required]
-        public int id_code { get; set; }
-
-        [Required]
-        public int id_device { get; set; }
-
-        [Required]
-        public int id_group { get; set; }
-
-        public di_groups di_groups { get; set; }
-
+        public int? id_code { get; set; }
         public di_codes di_codes { get; set; }
 
+        [Required]
+        public int? id_device { get; set; }
         public di_devices di_devices { get; set; }
+
+        [Required]
+        public int? id_group { get; set; }
+        public di_groups di_groups { get; set; }
+
+
+
+
+
     }
 }
