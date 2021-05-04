@@ -28,7 +28,21 @@ namespace DesktopClient.Model
                     CurrentUser = newUser;
                 }
             }
-            
+        }
+
+        public async void SerializeUser()
+        {
+            try
+            {
+                using (FileStream fs = new FileStream("user.json", FileMode.OpenOrCreate))
+                {
+                    await JsonSerializer.SerializeAsync<User>(fs, CurrentUser);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         public Data()

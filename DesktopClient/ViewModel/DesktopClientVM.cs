@@ -41,33 +41,43 @@ namespace DesktopClient.ViewModel
             {
                 return openDataViewWindow ?? new RelayCommand(obj =>
                 {
-                    ClientSocket.CreateConnection();
-
-                    if (ClientSocket.TryAutorize())
-                    {
-                        Thread thread = new Thread(ClientSocket.GetMessages);
-                        thread.Start();
-                    }
-
-                    bool IsAuth = false;
                     Window wnd = obj as Window;
-                    TextBox textBox = wnd.FindName("LoginBlock") as TextBox;
-                    PasswordBox passwordBox = wnd.FindName("PassBlock") as PasswordBox;
+                    while (true)
+                    {
+                        ClientSocket.CreateConnection();
+
+                        if (ClientSocket.TryAutorize())
+                        {
+                            OpenDataViewWindowMethod(wnd);
+                            ClientSocket.GetMessages();
+                            Thread thread = new Thread(GetMessages);
+                            thread.Start();
+                        }
+                        else
+                        {
+                            bool IsAuth = false;
+
+                            TextBox textBox = wnd.FindName("LoginBlock") as TextBox;
+                            PasswordBox passwordBox = wnd.FindName("PassBlock") as PasswordBox;
 
 
-                    if (textBox.Text == null)
-                    {
-                        ShowMessage("Введите логин");
+                            if (textBox.Text == null)
+                            {
+                                ShowMessage("Введите логин");
+                            }
+                            else
+                            {
+                                //IsAuth = DataWorker.Check_authentification(comboBox.Text, passwordBox.Password);
+                            }
+
+                            IsAuth = ClientSocket.SendLoginAndPassword(textBox.Text, passwordBox.Password);
+
+                            if (!IsAuth)
+                            {
+                                ShowMessage("Такой пары логин/пароль нет");
+                            }
+                        }
                     }
-                    else
-                    {
-                        //IsAuth = DataWorker.Check_authentification(comboBox.Text, passwordBox.Password);
-                    }
-                    if (IsAuth)
-                    {
-                        OpenDataViewWindowMethod(wnd);
-                    }
-                    else ShowMessage("Такой пары логин/пароль нет");
                 }
                     );
             }
@@ -92,6 +102,18 @@ namespace DesktopClient.ViewModel
             window.Owner = Application.Current.MainWindow;
             window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             window.ShowDialog();
+        }
+
+        void GetMessages()
+        {
+            while (true)
+            {
+                if (ClientSocket.newMessage != null)
+                {
+                    AllMessages.Add(ClientSocket.newMessage);
+                    ClientSocket.newMessage = null;
+                }
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

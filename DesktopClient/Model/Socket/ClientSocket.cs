@@ -28,11 +28,6 @@ namespace DesktopClient.Model.Sockets
             clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             clientSocket.Connect(new IPEndPoint(ip, 8080));
-
-            
-
-            
-            
         }
 
         public static bool TryAutorize()
@@ -42,23 +37,11 @@ namespace DesktopClient.Model.Sockets
             if (Encoding.UTF8.GetString(result, 0, n) == "NO_AUTORIZE")
             {
                 return false;
-                //clientSocket.Send(Encoding.UTF8.GetBytes(data.CurrentUser.Login + ";" + data.CurrentUser.Password));
-
             }
             else
             {
                 return true;
-                /*while (true)
-                {
-                    n = clientSocket.Receive(result);
-                    // Выводим данные на вьюшку
-                }*/
             }
-        }
-
-        static void SendToken()
-        {
-            clientSocket.Send(Encoding.UTF8.GetBytes(data.CurrentUser.user_token));
         }
 
         public static void GetMessages()
@@ -67,6 +50,24 @@ namespace DesktopClient.Model.Sockets
             {
                 int n = clientSocket.Receive(result);
                 newMessage = JsonSerializer.Deserialize<Message>(Encoding.UTF8.GetString(result));
+            }
+        }
+
+        public static bool SendLoginAndPassword(string login, string pasword)
+        {
+            clientSocket.Send(Encoding.UTF8.GetBytes(login + ";" + pasword));
+            int n = clientSocket.Receive(result);
+            if (Encoding.UTF8.GetString(result, 0, n) == "INVALID_AUTORIZE")
+            {
+                return false;
+            }
+            else
+            {
+                data.CurrentUser.Login = login;
+                data.CurrentUser.Password = pasword;
+                data.CurrentUser.user_token = Encoding.UTF8.GetString(result, 0, n);
+                data.SerializeUser();
+                return true;
             }
         }
     }
