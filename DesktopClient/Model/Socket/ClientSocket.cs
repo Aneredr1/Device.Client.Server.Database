@@ -32,7 +32,14 @@ namespace DesktopClient.Model.Sockets
 
         public static bool TryAutorize()
         {
-            clientSocket.Send(Encoding.UTF8.GetBytes(data.CurrentUser.user_token));
+            if (data.CurrentUser == null)
+            {
+                clientSocket.Send(Encoding.UTF8.GetBytes("1"));
+            }
+            else 
+            {
+                clientSocket.Send(Encoding.UTF8.GetBytes(data.CurrentUser.user_token));
+            }
             int n = clientSocket.Receive(result);
             if (Encoding.UTF8.GetString(result, 0, n) == "NO_AUTORIZE")
             {

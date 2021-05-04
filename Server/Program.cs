@@ -17,10 +17,10 @@ namespace Server
     class Program
     {
         private static byte[] result = new byte[1024];
-        private static int myPort = 8885;
+        private static int myPort = 8080;
         static Socket serverSocket;
         static DateTime dateSync;
-        static List<Message> sendMessages;
+        static List<Message> sendMessages = new List<Message>();
 
 
         static void Main(string[] args)
@@ -158,6 +158,7 @@ namespace Server
                 if (DataWorker.write_journal(device_mes))
                 {
                     sendMessages.Add(DataWorker.make_message());
+                    Console.WriteLine("Я записав");
                 }
                 else
                 {

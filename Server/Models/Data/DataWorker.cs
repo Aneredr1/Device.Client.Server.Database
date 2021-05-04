@@ -68,7 +68,7 @@ namespace Server.Models.Data
             Message mes;
             using (SurGardDataContext sg = new SurGardDataContext())
             {
-                jr_surgard note = sg.Journal.Last(); //последний элемент журнала
+                jr_surgard note = sg.Journal.OrderBy(x => x.date_action).Last(); //последний элемент журнала
 
                 string code = sg.Codes.Find(note.id_code).code; // код события
 

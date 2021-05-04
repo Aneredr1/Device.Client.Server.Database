@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using DesktopClient.ViewModel;
 
 namespace DesktopClient.View
 {
@@ -20,6 +21,7 @@ namespace DesktopClient.View
         public AuthWindow()
         {
             InitializeComponent();
+            DataContext = new DesktopClientVM();
         }
     }
 }
