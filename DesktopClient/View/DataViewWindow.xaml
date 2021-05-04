@@ -5,8 +5,39 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DesktopClient.View"
         mc:Ignorable="d"
-        Title="DataViewWindow" Height="450" Width="800">
+        Title="DataWindow" Height="450" Width="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
         
+
+        <ListView Grid.Row="1" x:Name="ViewAllMessages" ItemsSource="{Binding AllMessages}" Width="Auto">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Дата"                                            
+                                            DisplayMemberBinding="{Binding Path=date_action}"/>
+                    
+                    <GridViewColumn Header="Код события"
+                                            DisplayMemberBinding="{Binding Path=code}"/>
+                    
+                    <GridViewColumn Header="Событие"
+                                            DisplayMemberBinding="{Binding Path=code_name}"/>
+                    
+                    <GridViewColumn Header="Код устройства"
+                                            DisplayMemberBinding="{Binding Path=device_code}"/>
+                    
+                    <GridViewColumn Header="Устройство"
+                                            DisplayMemberBinding="{Binding Path=device_name}"/>
+                    
+                    <GridViewColumn Header="Код группы"
+                                            DisplayMemberBinding="{Binding Path=group_code}"/>
+                    
+                    <GridViewColumn Header="Группа"
+                                            DisplayMemberBinding="{Binding Path=group_name}"/>
+                    
+                </GridView>
+            </ListView.View>
+        </ListView>
     </Grid>
 </Window>

@@ -1,5 +1,4 @@
-﻿using DesktopClient.ViewModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -14,17 +13,19 @@ using System.Windows.Shapes;
 namespace DesktopClient.View
 {
     /// <summary>
-    /// Логика взаимодействия для DataViewWindow.xaml
+    /// Логика взаимодействия для MessageWindow.xaml
     /// </summary>
-    public partial class DataViewWindow : Window
+    public partial class MessageWindow : Window
     {
-        public static ListView AllMessagesView;
-
-        public DataViewWindow()
+        public MessageWindow(string text)
         {
             InitializeComponent();
-            DataContext = new DesktopClientVM();
-            AllMessagesView = ViewAllMessages;
+            MessageText.Text = text;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }
