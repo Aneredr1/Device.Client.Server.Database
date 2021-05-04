@@ -12,7 +12,7 @@
         </Grid.RowDefinitions>
         
 
-        <ListView Grid.Row="1" x:Name="ViewMessages" ItemsSource="{Binding AllNomenclature}" Width="Auto">
+        <ListView Grid.Row="1" x:Name="ViewAllMessages" ItemsSource="{Binding AllMessages}" Width="Auto">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Дата"                                            
