@@ -6,5 +6,6 @@ namespace DesktopClient.ViewModel
 {
     class DesktopClientVM
     {
+
     }
 }
