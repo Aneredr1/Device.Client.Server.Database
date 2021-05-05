@@ -1,6 +1,8 @@
 ﻿using DesktopClient.Models;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -12,8 +14,8 @@ namespace DesktopClient.Model.Sockets
     {
         static Socket clientSocket;
         static byte[] result = new byte[1024];
-        static Data data = new Data();
         static private Message message;
+        static SecurityToken Token;
 
         static public Message newMessage
         {
@@ -24,58 +26,49 @@ namespace DesktopClient.Model.Sockets
 
         public static void CreateConnection()
         {
-            IPAddress ip = IPAddress.Parse("127.0.0.1");
-            clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-            clientSocket.Connect(new IPEndPoint(ip, 8080));
+                IPAddress ip = IPAddress.Parse("127.0.0.1");
+                clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                clientSocket.Connect(new IPEndPoint(ip, 8080));
         }
 
-        public static bool TryAutorize()
+        public static bool TryAutorize(string login, string password)
         {
-            if (data.CurrentUser == null)
+            try
             {
-                clientSocket.Send(Encoding.UTF8.GetBytes("1"));
-            }
-            else 
-            {
-                clientSocket.Send(Encoding.UTF8.GetBytes(data.CurrentUser.user_token));
-            }
-            int n = clientSocket.Receive(result);
-            if (Encoding.UTF8.GetString(result, 0, n) == "NO_AUTORIZE")
-            {
-                return false;
-            }
-            else
-            {
+                clientSocket.Send(Encoding.UTF8.GetBytes("login:" + login + ";" + password));
+                int n = clientSocket.Receive(result);
+                var tokenHandler = new JwtSecurityTokenHandler();
+                Token = tokenHandler.ReadToken(Encoding.UTF8.GetString(result, 0, n));
                 return true;
             }
+            catch (Exception)
+            {
+                CreateConnection();
+                return false;
+            }
+            
         }
 
-        public static void GetMessages()
+        
+
+        public static void ReceiveMessages()
         {
+            ClientSocket.CreateConnection();
+            var tokenHandler = new JwtSecurityTokenHandler();
+            clientSocket.Send(Encoding.UTF8.GetBytes("token:" + tokenHandler.WriteToken(Token)));
             while (true)
             {
                 int n = clientSocket.Receive(result);
-                newMessage = JsonSerializer.Deserialize<Message>(Encoding.UTF8.GetString(result));
-            }
-        }
-
-        public static bool SendLoginAndPassword(string login, string pasword)
-        {
-            clientSocket.Send(Encoding.UTF8.GetBytes(login + ";" + pasword));
-            int n = clientSocket.Receive(result);
-            if (Encoding.UTF8.GetString(result, 0, n) == "INVALID_AUTORIZE")
-            {
-                return false;
-            }
-            else
-            {
-                data.CurrentUser.Login = login;
-                data.CurrentUser.Password = pasword;
-                data.CurrentUser.user_token = Encoding.UTF8.GetString(result, 0, n);
-                data.SerializeUser();
-                return true;
+                try
+                {
+                    newMessage = JsonSerializer.Deserialize<Message>(Encoding.UTF8.GetString(result, 0, n));
+                }
+                catch (Exception)
+                {
+                }
+                
             }
         }
     }
 }
+

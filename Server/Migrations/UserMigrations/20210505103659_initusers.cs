@@ -2,7 +2,7 @@
 
 namespace Server.Migrations.UserMigrations
 {
-    public partial class initialusers : Migration
+    public partial class initusers : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,8 +14,7 @@ namespace Server.Migrations.UserMigrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     User_Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Login = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    user_token = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -24,18 +23,18 @@ namespace Server.Migrations.UserMigrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "User_Id", "Login", "Password", "User_Name", "user_token" },
-                values: new object[] { 1, "Login1", "password", "Арбузов Арбуз Арбузович", "" });
+                columns: new[] { "User_Id", "Login", "Password", "User_Name" },
+                values: new object[] { 1, "Login1", "password", "Арбузов Арбуз Арбузович" });
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "User_Id", "Login", "Password", "User_Name", "user_token" },
-                values: new object[] { 2, "Login2", "qwerty", "Дынев Дынь Дыньевич", "" });
+                columns: new[] { "User_Id", "Login", "Password", "User_Name" },
+                values: new object[] { 2, "Login2", "qwerty", "Дынев Дынь Дыньевич" });
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "User_Id", "Login", "Password", "User_Name", "user_token" },
-                values: new object[] { 3, "Login3", "podsolnuh", "Кивиев Кивь Кивиевич", "" });
+                columns: new[] { "User_Id", "Login", "Password", "User_Name" },
+                values: new object[] { 3, "Login3", "podsolnuh", "Кивиев Кивь Кивиевич" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

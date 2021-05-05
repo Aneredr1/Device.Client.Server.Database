@@ -20,7 +20,7 @@ namespace DesktopClient.Models
 
         public string group_name { get; set; }
 
-        //public Message(DateTime date_action, string code, string code_name, string device_code, string device_name, string group_code, string group_name) 
+        //public Message(DateTime date_action, string code, string code_name, string device_code, string device_name, string group_code, string group_name)
         //{
         //    this.date_action = date_action;
         //    this.code = code;

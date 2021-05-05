@@ -9,13 +9,14 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace DesktopClient.ViewModel
 {
     class DesktopClientVM : INotifyPropertyChanged
     {
 
-        private List<Message> allMessages;
+        private List<Message> allMessages = new List<Message>();
         public List<Message> AllMessages
         {
             get { return allMessages; }
@@ -33,7 +34,6 @@ namespace DesktopClient.ViewModel
             wnd.Close();
         }
 
-
         private RelayCommand openDataViewWindow;
         public RelayCommand OpenDataViewWindow
         {
@@ -42,46 +42,38 @@ namespace DesktopClient.ViewModel
                 return openDataViewWindow ?? new RelayCommand(obj =>
                 {
                     Window wnd = obj as Window;
-                    while (true)
+                    bool IsAuth = false;
+
+                    TextBox textBox = wnd.FindName("LoginBlock") as TextBox;
+                    PasswordBox passwordBox = wnd.FindName("PassBlock") as PasswordBox;
+
+                    if (textBox.Text == null)
                     {
-                        ClientSocket.CreateConnection();
-
-                        if (ClientSocket.TryAutorize())
-                        {
-                            OpenDataViewWindowMethod(wnd);
-                            ClientSocket.GetMessages();
-                            Thread thread = new Thread(GetMessages);
-                            thread.Start();
-                        }
-                        else
-                        {
-                            bool IsAuth = false;
-
-                            TextBox textBox = wnd.FindName("LoginBlock") as TextBox;
-                            PasswordBox passwordBox = wnd.FindName("PassBlock") as PasswordBox;
-
-
-                            if (textBox.Text == null)
-                            {
-                                ShowMessage("Введите логин");
-                            }
-                            else
-                            {
-                                //IsAuth = DataWorker.Check_authentification(comboBox.Text, passwordBox.Password);
-                            }
-
-                            IsAuth = ClientSocket.SendLoginAndPassword(textBox.Text, passwordBox.Password);
-
-                            if (!IsAuth)
-                            {
-                                ShowMessage("Такой пары логин/пароль нет");
-                            }
-                        }
+                        ShowMessage("Введите логин");
                     }
+                    else
+                    {
+                        //Thread thread = new Thread(ClientSocket.CreateConnection);
+                        //thread.Start();
+                        ClientSocket.CreateConnection();
+                        IsAuth = ClientSocket.TryAutorize(textBox.Text, passwordBox.Password);
+                    }
+                    if (IsAuth)
+                    {
+                        OpenDataViewWindowMethod(wnd);
+                        Thread StartRecieve = new Thread(ClientSocket.ReceiveMessages);
+                        StartRecieve.Start();
+
+                        Thread FillTable = new Thread(GetMessages);
+                        FillTable.Start();
+                    }
+                    else ShowMessage("Такой пары логин/пароль нет");
+                        
                 }
                     );
             }
         }
+
 
         private void UpdateView()
         {
@@ -112,6 +104,7 @@ namespace DesktopClient.ViewModel
                 {
                     AllMessages.Add(ClientSocket.newMessage);
                     ClientSocket.newMessage = null;
+                    Application.Current.Dispatcher.Invoke(new System.Action(() => UpdateView())); 
                 }
             }
         }

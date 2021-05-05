@@ -37,9 +37,6 @@ namespace Server.Migrations.UserMigrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("user_token")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("User_Id");
 
                     b.ToTable("Users");
@@ -50,24 +47,21 @@ namespace Server.Migrations.UserMigrations
                             User_Id = 1,
                             Login = "Login1",
                             Password = "password",
-                            User_Name = "Арбузов Арбуз Арбузович",
-                            user_token = ""
+                            User_Name = "Арбузов Арбуз Арбузович"
                         },
                         new
                         {
                             User_Id = 2,
                             Login = "Login2",
                             Password = "qwerty",
-                            User_Name = "Дынев Дынь Дыньевич",
-                            user_token = ""
+                            User_Name = "Дынев Дынь Дыньевич"
                         },
                         new
                         {
                             User_Id = 3,
                             Login = "Login3",
                             Password = "podsolnuh",
-                            User_Name = "Кивиев Кивь Кивиевич",
-                            user_token = ""
+                            User_Name = "Кивиев Кивь Кивиевич"
                         });
                 });
 #pragma warning restore 612, 618
