@@ -7,12 +7,14 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 
 namespace DesktopClient.Model.Sockets
 {
     public static class ClientSocket
     {
-        static Socket clientSocket;
+        public static Thread StartRecieve;
+        public static Socket clientSocket;
         static byte[] result = new byte[1024];
         static private Message message;
         static SecurityToken Token;
@@ -22,7 +24,6 @@ namespace DesktopClient.Model.Sockets
             get { return message; }
             set { message = value; }
         }
-
 
         public static void CreateConnection()
         {
@@ -37,25 +38,43 @@ namespace DesktopClient.Model.Sockets
             {
                 clientSocket.Send(Encoding.UTF8.GetBytes("login:" + login + ";" + password));
                 int n = clientSocket.Receive(result);
-                var tokenHandler = new JwtSecurityTokenHandler();
-                Token = tokenHandler.ReadToken(Encoding.UTF8.GetString(result, 0, n));
-                return true;
+                switch (Encoding.UTF8.GetString(result, 0, n))
+                {
+                    case "invalid_auth": return false;
+                    default: { 
+
+                                var tokenHandler = new JwtSecurityTokenHandler();
+                                Token = tokenHandler.ReadToken(Encoding.UTF8.GetString(result, 0, n));
+                                return true; 
+                             }
+                }
             }
             catch (Exception)
             {
-                CreateConnection();
                 return false;
             }
             
         }
 
-        
 
-        public static void ReceiveMessages()
+        public static bool StartReceiveMessages()
         {
-            ClientSocket.CreateConnection();
-            var tokenHandler = new JwtSecurityTokenHandler();
-            clientSocket.Send(Encoding.UTF8.GetBytes("token:" + tokenHandler.WriteToken(Token)));
+                ClientSocket.CreateConnection();
+                var tokenHandler = new JwtSecurityTokenHandler();
+                clientSocket.Send(Encoding.UTF8.GetBytes("token:" + tokenHandler.WriteToken(Token)));
+                
+                int n = clientSocket.Receive(result);
+
+            switch (Encoding.UTF8.GetString(result, 0, n))
+            {
+                case "valid_auth": StartRecieve = new Thread(ReceiveMessages); return true;
+                case "invalid_auth": return false;
+                default: return false;
+            }
+            
+        }
+        public static void ReceiveMessages() 
+        {
             while (true)
             {
                 int n = clientSocket.Receive(result);
@@ -66,7 +85,6 @@ namespace DesktopClient.Model.Sockets
                 catch (Exception)
                 {
                 }
-                
             }
         }
     }

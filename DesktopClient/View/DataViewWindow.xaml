@@ -9,10 +9,14 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
 
-        <ListView Grid.Row="1" x:Name="ViewAllMessages" ItemsSource="{Binding AllMessages}" Width="Auto">
+        <ListView Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" x:Name="ViewAllMessages" ItemsSource="{Binding AllMessages}" Width="Auto">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Дата"                                            
@@ -39,5 +43,11 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        <Button Grid.Row="1" Grid.Column="0" Content="Остановить получение"
+                Command="{Binding StopReceice}"
+                />
+        <Button Grid.Row="1" Grid.Column="1" Content="Возобновить получение"
+                Command="{Binding ResumeReceice}"
+                />
     </Grid>
 </Window>

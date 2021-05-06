@@ -15,6 +15,12 @@ namespace DesktopClient.ViewModel
 {
     class DesktopClientVM : INotifyPropertyChanged
     {
+        public Thread FillTable;
+
+        public DesktopClientVM()
+        {
+            FillTable = new Thread(GetMessages);
+        }
 
         private List<Message> allMessages = new List<Message>();
         public List<Message> AllMessages
@@ -53,19 +59,16 @@ namespace DesktopClient.ViewModel
                     }
                     else
                     {
-                        //Thread thread = new Thread(ClientSocket.CreateConnection);
-                        //thread.Start();
                         ClientSocket.CreateConnection();
                         IsAuth = ClientSocket.TryAutorize(textBox.Text, passwordBox.Password);
                     }
                     if (IsAuth)
                     {
                         OpenDataViewWindowMethod(wnd);
-                        Thread StartRecieve = new Thread(ClientSocket.ReceiveMessages);
-                        StartRecieve.Start();
 
-                        Thread FillTable = new Thread(GetMessages);
+                        ClientSocket.StartReceiveMessages();
                         FillTable.Start();
+
                     }
                     else ShowMessage("Такой пары логин/пароль нет");
                         
@@ -74,6 +77,42 @@ namespace DesktopClient.ViewModel
             }
         }
 
+        private RelayCommand stopReceive;
+        public RelayCommand StopReceive
+        {
+            get
+            {
+                return stopReceive ?? new RelayCommand(obj =>
+                {
+                    if (ClientSocket.StartRecieve.IsAlive)
+                    {
+                        ClientSocket.StartRecieve.Abort();
+                        ClientSocket.clientSocket.Close();
+                    }
+                }
+                );
+            }
+        }
+
+        private RelayCommand resumeReceive;
+        public RelayCommand ResumeReceive
+        {
+            get
+            {
+                return resumeReceive ?? new RelayCommand(obj =>
+                {
+                    if (!ClientSocket.StartRecieve.IsAlive)
+                    {
+                        if (!ClientSocket.StartReceiveMessages())
+                        {
+                            AuthWindow authWnd = new AuthWindow();
+                        }
+                        ;
+                    }
+                }
+                );
+            }
+        }
 
         private void UpdateView()
         {
@@ -96,7 +135,7 @@ namespace DesktopClient.ViewModel
             window.ShowDialog();
         }
 
-        void GetMessages()
+        public void GetMessages()
         {
             while (true)
             {
